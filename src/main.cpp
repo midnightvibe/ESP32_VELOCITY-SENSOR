@@ -8,10 +8,18 @@
 #include <Arduino.h>
 
 // Configuration constants:
-const byte RevSensePin = 2;
+const byte RevSensePin = 2; //A byte stores an 8-bit unsigned number, from 0 to 255.
 const float WheelRadiusInMeters = 0.33;
+// The const keyword stands for constant. It is a variable qualifier that modifies
+// the behavior of the variable, making a variable "read-only". This means that the
+// variable can be used just as any other variable of its type, but its value cannot
+// be changed. You will get a compiler error if you try to assign a value to a const variable.
+
 const unsigned long DisplayIntervalMillis = 1000;  // Update once per second
 const unsigned long MaxRevTimeMicros = 2000000UL; // >2 seconds per revolution counts as 0 RPM
+//Unsigned long variables are extended size variables for number storage, and store
+//32 bits (4 bytes). Unlike standard longs unsigned longs won’t store negative numbers,
+//making their range from 0 to 4,294,967,295 (2^32 - 1).
 
 // Variables used in the ISR and in the main code must be 'volatile'
 volatile unsigned long RevSenseTimeMicros = 0;  //  Time that the rising edge was sensed
@@ -26,6 +34,7 @@ void setup()
     Serial.begin(9600);
     pinMode(RevSensePin, INPUT);
     attachInterrupt(digitalPinToInterrupt(RevSensePin), RevSenseISR, RISING);
+    // Rising signal going from low to high; ISR Interrupt
 }
 
 void RevSenseISR()
@@ -33,6 +42,8 @@ void RevSenseISR()
     static unsigned long revSensePreviousMicros = 0;  // 'static' to retain value between calls
 
     RevSenseTimeMicros = micros();
+    // Returns the number of microseconds since the Arduino board began running the current program.
+    // Data type: unsigned long
     RevTimeMicros = RevSenseTimeMicros - revSensePreviousMicros; // Time for last revolution
 }
 
